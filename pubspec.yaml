@@ -1,0 +1,15 @@
+name: lanchonete_api
+description: API REST para sistema de pedidos de lanchonete - Luan e Pedro.
+version: 1.0.0
+publish_to: none
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+dependencies:
+  shelf: ^1.4.2
+  shelf_router: ^1.1.4
+  shelf_cors_headers: ^0.1.5
+  sqlite3: ^2.7.4
+  crypto: ^3.0.6
+  uuid: ^4.5.1
+dev_dependencies:
+  test: ^1.25.8
