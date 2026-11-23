@@ -6,6 +6,7 @@ API REST em Dart para gerenciamento de cardápio e pedidos de uma lanchonete.
 - Cadastro e login de clientes com senha armazenada em hash SHA-256 com salt e token Bearer em tabela de sessões; logout.
 - Perfis `customer` e `admin`.
 - Categorias e produtos (CRUD de produtos).
+- Catálogo inicial com lanches, acompanhamentos e bebidas, criado automaticamente quando o banco ainda não tem produtos.
 - Pedidos com vários itens, observações, retirada ou entrega.
 - Cálculo do subtotal, taxa e total no servidor.
 - Status do pedido e status do pagamento.
@@ -64,6 +65,7 @@ Isso evita erros comuns de arredondamento com ponto flutuante.
 
 ## Rotas
 Consulte `GET /docs` para a lista completa de endpoints e enums.
+O app pode carregar o catálogo público por `GET /items` (somente itens disponíveis) ou filtrar por categoria, por exemplo `GET /items?category_id=1`. Cada item retorna `id`, `name`, `description`, `price_cents`, `image_url`, `available`, `category_id` e `category_name`. Ao tocar em um produto, consulte `GET /items/<id>` para obter os mesmos dados para a página de detalhe. O banco recebe automaticamente um cardápio de exemplo com fotos e descrições; produtos já existentes recebem uma foto quando ainda não têm `image_url`.
 
 ## Observações importantes de segurança
 Este projeto é uma base acadêmica funcional, não uma implantação pronta para produção.

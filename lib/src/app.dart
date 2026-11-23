@@ -55,6 +55,8 @@ Handler createApp(AppDatabase database) {
       'GET /categories': 'Listar categorias',
       'POST /categories': 'Criar categoria (admin)',
       'GET /products': 'Listar produtos; aceita ?category_id=1&available=true',
+      'GET /items': 'Listar itens disponíveis para o app; aceita ?category_id=1',
+      'GET /items/<id>': 'Detalhar item disponível com foto, descrição e preço',
       'GET /products/<id>': 'Detalhar produto',
       'POST /products': 'Criar produto (admin)',
       'PATCH /products/<id>': 'Editar produto (admin)',
@@ -168,6 +170,26 @@ Handler createApp(AppDatabase database) {
     if (available == 'false') sql += ' AND p.available=0';
     sql += ' ORDER BY p.name';
     return jsonResponse(db.select(sql, args).map((e) => e).toList());
+  });
+  router.get('/items', (Request r) {
+    final category = r.url.queryParameters['category_id'];
+    var sql = 'SELECT p.*, c.name AS category_name FROM products p LEFT JOIN categories c ON c.id=p.category_id WHERE p.available=1';
+    final args = <Object?>[];
+    if (category != null && int.tryParse(category) != null) {
+      sql += ' AND p.category_id=?';
+      args.add(int.parse(category));
+    }
+    sql += ' ORDER BY c.name, p.name';
+    return jsonResponse(db.select(sql, args).map((e) => e).toList());
+  });
+  router.get('/items/<id>', (Request r, String id) {
+    final rows = db.select('''
+      SELECT p.*, c.name AS category_name
+      FROM products p LEFT JOIN categories c ON c.id=p.category_id
+      WHERE p.id=? AND p.available=1
+    ''', [int.tryParse(id) ?? -1]);
+    if (rows.isEmpty) return jsonResponse({'error': 'Item não encontrado.'}, status: 404);
+    return jsonResponse(rows.first);
   });
   router.get('/products/<id>', (Request r, String id) {
     final rows = db.select('SELECT * FROM products WHERE id=?', [int.tryParse(id) ?? -1]);
